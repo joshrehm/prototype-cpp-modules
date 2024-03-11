@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.28)
 
 #
 # Configure CMake properties
@@ -19,6 +19,7 @@ project(module_lib VERSION ${MODULE_LIB_VERSION} LANGUAGES C CXX )
 #
 # Source files
 add_subdirectory(src)
+add_subdirectory(modules)
 
 #
 # Unit Testing

@@ -1,8 +1,14 @@
 #
 # Set up our executable
-add_executable(prototype_cpp_modules
+add_executable(prototype_cpp_modules)
+
+target_sources(prototype_cpp_modules
+PUBLIC FILE_SET CXX_MODULES FILES
+    "add.cpp"
+
+PRIVATE
     "prototype_cpp_modules.cpp"
- )
+)
 
 set_standard_target_options(prototype_cpp_modules)
 

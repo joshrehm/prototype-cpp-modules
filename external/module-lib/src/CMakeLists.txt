@@ -1,8 +1,10 @@
 #
 # Set up our executable
-add_library(module_lib
+add_library(module_lib)
+
+target_sources(module_lib PRIVATE 
     "module_lib.cpp"
- )
+)
 
 set_standard_target_options(module_lib)
 
