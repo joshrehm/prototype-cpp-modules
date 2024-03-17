@@ -7,84 +7,49 @@ useful.
 
 ## Requirements
 
- - Conan 2.0+
  - CMake 3.28+
 
 ## Configure Step
 
-This project integrates Conan 2 into the build process. Conan is automatically
-invoked during the cmake configuration process.
-
-To configure the project with tests:
+To configure the project:
 
 ```
-cmake --preset=<preset_name> -DPROTOTYPE_CPP_MODULES_RUN_TESTS_ON_BUILD=ON
+mkdir build
+cd build
+cmake ..
 ```
-
-The `<preset_name>` placeholder should be an available preset defined in
-CMakePresets.json:
-
-- windows-x86-debug
-- windows-x86-release
-- windows-x64-debug
-- windows-x64-release
-- linux-x86-debug
-- linux-x86-release
-- linux-x64-debug
-- linux-x64-release
-
-If you do not want to run tests automatically, use `-DPROTOTYPE_CPP_MODULES_ENABLE_TESTS=ON` 
-instead of `-DPROTOTYPE_CPP_MODULES_RUN_TESTS_ON_BUILD=ON`. Omit both parameters
-to disable testing.
-
-Available cmake cache variables are described below:
-
-### Global Variables
-
- - `WARNINGS_AS_ERRORS`: Treats compiler warnings as errors. `ON` by default. This 
-   variable is "global" in that it affects the default value of all subprojets that
-   utilize this template.
- - `PROJECT_OUTPUT_PATH`: Specifies the output path of built binaries. The default is 
-   the project's `.bin` directory. This variable is "global" in that it affects the 
-   default value of all subprojects that utilize this template.
-
-### PROTOTPYE_CPP_MODULES Variables
-
- - `PROTOTYPE_CPP_MODULES_OUTPUT_PATH`: Specifies the output path of this project's 
-   built binaries. Unlike `PROJECT_OUTPUT_PATH`, this variable affects only this
-   project. Defaults to `${PROJECT_OUTPUT_PATH}`.
- - `PROTOTYPE_CPP_MODULES_ENABLE_TESTS`: Enable unit tests. `OFF` by default.
- - `PROTOTYPE_CPP_MODULES_RUN_TESTS_ON_BUILD`: Run tests automatically after build.
-   Implies `PROTOTYPE_CPP_MODULES_ENABLE_TESTS`. `OFF` by default.
- - `PROTOTYPE_CPP_MODULES_ENABLE_CPPCHECK`: Enables cppcheck static analysis. `ON`
-   by default.
- - `PROTOTYPE_CPP_MODULES_WARNINGS_AS_ERRORS`: Treats compiler warnings as errors.
-   Set to `${WARNINGS_AS_ERRORS}` by default.
- 
- ### MODULE_LIB Variables
-
- - `MODULE_LIB_OUTPUT_PATH`: Specifies the output path of this project's 
-   built binaries. Unlike `PROJECT_OUTPUT_PATH`, this variable affects only this
-   project. Defaults to `${PROJECT_OUTPUT_PATH}`.
- - `MODULE_LIB_ENABLE_TESTS`: Enable unit tests. `OFF` by default.
- - `MODULE_LIB_RUN_TESTS_ON_BUILD`: Run tests automatically after build.
-   Implies `MODULE_LIB_ENABLE_TESTS`. `OFF` by default.
- - `MODULE_LIB_ENABLE_CPPCHECK`: Enables cppcheck static analysis. `ON`
-   by default.
- - `MODULE_LIB_WARNINGS_AS_ERRORS`: Treats compiler warnings as errors.
-   Set to `${WARNINGS_AS_ERRORS}` by default.
-
 
 ## Build Step
 
 To build the project:
 
 ```
-cmake --build --preset=<preset_name>
+cmake --build .
 ```
 
-Alternatively you may open the project in Visual Studio or Visual Studio Code and 
-build from the menu after selecting your desire configuration. Other IDEs may 
-work, but they have not been tested.
+# Layout
 
-By default, output binaries will be put into the project's `.bin` directory.
+The project consists of two projects: prototype-cpp-modules and module_lib. 
+
+The CMake setup is pretty standard. A root "CMakeLists.txt" file which includes the "src"
+directory. From there, the prototype_cpp_modules target and executable are defined. The
+root "CMakeLists.txt" file also includes the "external" directory containing our static
+module library.
+
+The static module_lib library contains C++ 20 our C++ 20 module's source code. I placed it
+in a static library just to ensure it could be included and linked correctly, but there's
+no reason why module source can't be placed directly into the prototype-cpp-modules 
+executable.
+
+Modules are defined through module interface files, which may contain a module definition
+(or declaration) and an optional implementation. The module_lib separates the two into an
+definition and separate implementation. I chose to put module interface files in the 
+"modules" directory to separate them from the implementation files, similar to how public
+include files are handled. However, there is no reason the interface files need to be
+separated from the implementation files other than for organizational purposes.
+
+CMake is informed about the module interface files via the `FILE_SET CXX_MODULES` keywords 
+when specifying target source code. You can find this call in the 
+"external/module-lib/modules/CMakeLists.txt" file.
+
+

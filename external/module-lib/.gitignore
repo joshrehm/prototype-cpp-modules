@@ -1,7 +1,5 @@
 # Configuration and build output folders
-.bin
-.build
-.conan
+build
 
 # User Files
 CMakeUserPresets.js
